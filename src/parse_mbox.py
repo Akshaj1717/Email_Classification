@@ -20,4 +20,50 @@ def strip_html(html_text: str) -> str:
         tag.decompose()
     text = soup.get_text(seprator="")
     
+    # removing extra whitespace and newlines
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+    
+def get_body(msg) -> str:
+    """
+    extracts the body of an email message.
+
+    an email can be:
+    - simple (text/plain or text/html)
+    - multipart (text/plain and text/html)
+    text/plain is preferred over text/html if both are present.
+    """
+
+    if msg.is_multipart():
+        plain_parts = []
+        html_parts = []
+        for part in msg.walk():
+            content_type = part.get_content_type()
+            content_disposition = str(part.get("Content-Disposition", ""))
+
+            # skip attachments as we only want the email body
+            if "attachment" in contet_disposition:
+                continue
+
+            try:
+                payload = part.get_payload(decode=True)
+                if payload is None:
+                    continue
+                charset = part.get_content_charset or "utf-8"
+                decoded = payload.decode(charset, errors="replace")
+            except (LookupError, ValueError):
+                continue
+
+            if content_type == "text/plain":
+                plain_parts.append(decoded)
+            elif content_type == "text/html":
+                html_parts.append(decoded)
+        
+        if plain_parts:
+            return " ".join(plain_parts).strip()
+        elif html_parts:
+            return strip_html(" ".join(html_parts))
+        else:
+            return ""
+        
     
