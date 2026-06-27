@@ -132,3 +132,20 @@ def parse_mbox (input_path: str, max_body_chars: int = 5000) -> pd.DataFrame:
 
     df = pd.DataFrame(records)
     return df
+
+def main():
+    parser = argparse.ArgumentParser(description="Parse Gmail .mbox file export into a CSV")
+    parser.add_argument("--input", required=True, help="Path to the .mbox file")
+    parser.add_argument("--output", required=True, help="Path to write the output CSV")
+    parser.add_argument(
+        "--max-body-chars", type=int, default=5000,
+        help="Truncate email bodies longer than this many characters (default: 5000)"
+    )
+    args = parser.parse_args()
+
+    df = parse_mbox(args.input, max_body_chars=args.max_body_chars)
+    df.to_csv(args.output, index=False)
+    print(f"Saved to {args.output}")
+    print(f"\nShape: {df.shape}")
+    print(f"\nDate range: {df['date'].min()} to {df['date'].max()}")
+    print(f"\nSample gmail_labels values: \n{df['gmail_labels'].value_counts().head(10)}")
