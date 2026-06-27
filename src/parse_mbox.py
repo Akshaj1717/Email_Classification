@@ -149,3 +149,6 @@ def main():
     print(f"\nShape: {df.shape}")
     print(f"\nDate range: {df['date'].min()} to {df['date'].max()}")
     print(f"\nSample gmail_labels values: \n{df['gmail_labels'].value_counts().head(10)}")
+
+if __name__ == "__main__":
+    main()
