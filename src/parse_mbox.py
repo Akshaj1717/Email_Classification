@@ -3,7 +3,7 @@
 import argparse
 import mailbox
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -49,7 +49,7 @@ def get_body(msg) -> str:
                 payload = part.get_payload(decode=True)
                 if payload is None:
                     continue
-                charset = part.get_content_charset or "utf-8"
+                charset = part.get_content_charset() or "utf-8"
                 decoded = payload.decode(charset, errors="replace")
             except (LookupError, ValueError):
                 continue
@@ -86,7 +86,12 @@ def parse_date(date_str: str):
     if not date_str:
         return None
     try:
-        return parsedate_to_datetime(date_str)
+        dt = parsedate_to_datetime(date_str)
+        if dt is not None and dt.tzinfo is None:
+        # some Date headers lack timezone info entirely - assume UTC
+        # so every value in the column is consistently timezone-aware
+            dt = dt.replace(tzinfo=timezone.utc) 
+        return dt
     except (TypeError, ValueError):
         return None
     
@@ -126,8 +131,6 @@ def parse_mbox (input_path: str, max_body_chars: int = 5000) -> pd.DataFrame:
             # Real-world data WILL have malformed messages. Skip and count them
             # rather than letting one bad email crash the whole parse.
             skipped += 1
-            if skipped <= 10:
-                print(f"SKIPPED - error: {repr(e)}")
             continue
 
     print(f"Parse {len(records)} emails. Skipped {skipped} malformed messages")
