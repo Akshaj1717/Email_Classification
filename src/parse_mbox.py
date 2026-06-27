@@ -18,7 +18,7 @@ def strip_html(html_text: str) -> str:
     # removing script and style elements 
     for tag in soup(["script", "style"]):
         tag.decompose()
-    text = soup.get_text(seprator="")
+    text = soup.get_text(separator="")
     
     # removing extra whitespace and newlines
     text = re.sub(r"\s+", " ", text).strip()
@@ -42,7 +42,7 @@ def get_body(msg) -> str:
             content_disposition = str(part.get("Content-Disposition", ""))
 
             # skip attachments as we only want the email body
-            if "attachment" in contet_disposition:
+            if "attachment" in content_disposition:
                 continue
 
             try:
@@ -126,6 +126,8 @@ def parse_mbox (input_path: str, max_body_chars: int = 5000) -> pd.DataFrame:
             # Real-world data WILL have malformed messages. Skip and count them
             # rather than letting one bad email crash the whole parse.
             skipped += 1
+            if skipped <= 10:
+                print(f"SKIPPED - error: {repr(e)}")
             continue
 
     print(f"Parse {len(records)} emails. Skipped {skipped} malformed messages")
