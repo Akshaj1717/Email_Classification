@@ -1,0 +1,1 @@
+# extracts emails from .mbox into structured format
