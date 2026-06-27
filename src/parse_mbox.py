@@ -80,3 +80,22 @@ def get_body(msg) -> str:
         if msg.get_content_type() == "text/html":
             return strip_html(decoded)
         return decoded.strip()
+    
+def parse_date(date_str: str):
+    # parses the email date header into a datetime object. returns none if unparseable
+    if not date_str:
+        return None
+    try:
+        return parsedate_to_datetime(date_str)
+    except (TypeError, ValueError):
+        return None
+    
+def parse_mbox (input_path: str, max_body_chars: int = 5000) -> pd.DataFrame:
+    # parses the full .mbox file into a pandas dataframe with one row per email
+
+    print(f"Opening mbox file: {input_path}")
+    print("(This can take a few minutes for large files)")
+    mbox = mailbox.mbox(input_path)
+
+    records = []
+    skipped = 0
