@@ -99,3 +99,36 @@ def parse_mbox (input_path: str, max_body_chars: int = 5000) -> pd.DataFrame:
 
     records = []
     skipped = 0
+
+    # We don't know the count upfront without a full pass, so tqdm just shows
+    # a running counter rather than a percentage bar - still useful to confirm
+    # it's alive and see throughput.
+
+    for msg in tqdm(mbox, desc="Parsing emails", unit="email"):
+        try:
+            gmail_labels = msg.get("X-Gmail-Labels", "")
+            date = parse_date(msg.get("Date", ""))
+            sender = msg.get("From", "")
+            subject = msg.get("Subject", "")
+            body = get_body(msg)
+
+            if body:
+                body = body[:max_body_chars]
+
+            records.append({
+                "date": date,
+                "sender": sender,
+                "subject": subject,
+                "body": body,
+                "gmail_labels": gmail_labels
+            })
+        except Exception as e:
+            # Real-world data WILL have malformed messages. Skip and count them
+            # rather than letting one bad email crash the whole parse.
+            skipped += 1
+            continue
+
+    print(f"Parse {len(records)} emails. Skipped {skipped} malformed messages")
+
+    df = pd.DataFrame(records)
+    return df
