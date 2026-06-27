@@ -66,4 +66,17 @@ def get_body(msg) -> str:
         else:
             return ""
         
-    
+    else:
+        # not multipart, single body which could be plain or html
+        try:
+            payload = msg.get_payload(decode=True)
+            if payload is None:
+                return ""
+            charset = msg.get_content_charset() or "utf-8"
+            decoded = payload.decode(charset, errors="replace")
+        except (LookupError, ValueError):
+            return ""
+        
+        if msg.get_content_type() == "text/html":
+            return strip_html(decoded)
+        return decoded.strip()
