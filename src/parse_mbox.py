@@ -152,7 +152,9 @@ def main():
     df.to_csv(args.output, index=False)
     print(f"Saved to {args.output}")
     print(f"\nShape: {df.shape}")
-    print(f"\nDate range: {df['date'].min()} to {df['date'].max()}")
+    n_missing_dates = df['date'].isna().sum()
+    print(f"\nEmails with unparseable or missing dates: {n_missing_dates}")
+    print(f"Date range: {df['date'].dropna().min()} to {df['date'].dropna().max()}")
     print(f"\nSample gmail_labels values: \n{df['gmail_labels'].value_counts().head(10)}")
 
 if __name__ == "__main__":
