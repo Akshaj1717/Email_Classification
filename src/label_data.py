@@ -41,7 +41,7 @@ def extract_category(label_str: str) -> str:
         return "Primary"
     
     # finding all matches of the pattern "category <word>" in the label string
-    matches = re.findall(r"category (\w+)", label_str)
+    matches = re.findall(r"Category (\w+)", label_str, re.IGNORECASE)
 
     if not matches:
         return "Primary" # no tag means it's in the primary inbox
