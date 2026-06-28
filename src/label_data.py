@@ -56,8 +56,10 @@ def extract_category(label_str: str) -> str:
 def flag_job_candidate(sender: str, subject: str) -> bool:
     # candidate filter, so not a final label. just a heuristic to flag potential job-related emails for manual review
 
-    sender = (sender or "").lower()
-    subject = (subject or "").lower()
+    sender = str(sender) if pd.notna(sender) else ""
+    subject = str(subject) if pd.notna(subject) else ""
+    sender = sender.lower()
+    subject = subject.lower()
 
     for domain in JOB_SENDER_DOMAINS:
         if domain in sender:
