@@ -53,3 +53,47 @@ def extract_category(label_str: str) -> str:
         
     return matches[0]
 
+def flag_job_candidate(sender: str, subject: str) -> bool:
+    # candidate filter, so not a final label. just a heuristic to flag potential job-related emails for manual review
+
+    sender = (sender or "").lower()
+    subject = (subject or "").lower()
+
+    for domain in JOB_SENDER_DOMAINS:
+        if domain in sender:
+            return True
+        
+    for keyword in JOB_SUBJECT_KEYWORDS:
+        if keyword in subject:
+            return True
+        
+    return False
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Label parsed emails with category + job-application candidates")
+    parser.add_argument("--input", required=True, help="Path to parsed emails.csv")
+    parser.add_argument("--output", required=True, help="Path to write labeled CSV")
+    args = parser.parse_args()
+
+    print(f"Loading {args.input}...")
+    df = pd.read_csv(args.input)
+    print(f"Loaded {len(df)} emails")
+
+    df["gmail_category"] = df["gmail_labels"].apply(extract_category)
+    df["job_candidate"] = df.apply(lambda row: flag_job_candidate(row.get("sender", ""), row.get("subject", "")), axis=1)
+
+    print(f"\nGmail category breakdown:")
+    print(df["gmail_category"].value_counts())
+
+    n_candidates = df["job_candidate"].sum()
+    print(f"\nFlagged {n_candidates} job/application candidates ({n_candidates/len(df)*100:.1f}% of all emails)")
+    print("These need manual review - see the next step.")
+ 
+    df.to_csv(args.output, index=False)
+    print(f"\nSaved to {args.output}")
+ 
+ 
+if __name__ == "__main__":
+    main()
+
