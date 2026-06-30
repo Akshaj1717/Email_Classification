@@ -18,8 +18,7 @@ JOB_SENDER_DOMAINS = [
     "ashbyhq.com",
     "taleo.net",
     "successfactors.com",
-    "indeedemail.com",
-    "linkedin.com",  
+    "indeedemail.com",  
     "handshake.com",
     "ziprecruiter.com",
     "glassdoor.com",
@@ -68,8 +67,14 @@ def flag_job_candidate(sender: str, subject: str) -> bool:
     for keyword in JOB_SUBJECT_KEYWORDS:
         if keyword in subject:
             return True
-        
-    return False
+    
+    SUBJECT_CONTENT = ["thanks for applying", "your application", "job alert", "applied"]
+
+    if "linkedin.com" in sender and any(keyword in subject for keyword in SUBJECT_CONTENT):
+        return True
+    else:
+        return False
+
 
 
 def main():
