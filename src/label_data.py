@@ -32,6 +32,9 @@ JOB_SUBJECT_KEYWORDS = [
     "internship", "recruiting", "recruiter", "hiring team", "technical screen",
 ]
 
+# for the linkedin check specifically
+SUBJECT_CONTENT = ["thanks for applying", "your application", "job alert", "applied"]
+
 def extract_category(label_str: str) -> str:
     # pulling the Gmail tab category out of the raw X-Gmail-Labels string
     # e.g. "CATEGORY_PERSONAL" or "CATEGORY_UPDATES"
@@ -67,8 +70,7 @@ def flag_job_candidate(sender: str, subject: str) -> bool:
     for keyword in JOB_SUBJECT_KEYWORDS:
         if keyword in subject:
             return True
-    
-    SUBJECT_CONTENT = ["thanks for applying", "your application", "job alert", "applied"]
+
 
     if "linkedin.com" in sender and any(keyword in subject for keyword in SUBJECT_CONTENT):
         return True
