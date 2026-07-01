@@ -7,4 +7,7 @@ df = pd.DataFrame(dataset, columns=['date','sender','subject','body','gmail_labe
 print(df.loc[df['job_candidate'] == True])
 print(df['job_candidate'].value_counts())
 
-sender_domain = pd.Series.str.extract(df['sender'], re.search(r'@([A-Za-z0-9.-]+)'))
+df['sender'] = df['sender'].str.extract(r'@([A-Za-z0-9.-]+)')
+
+print(df['sender'].value_counts().head(15))
+print(df.sample(n=15, random_state=42).to_string(index=False))
