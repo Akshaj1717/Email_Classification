@@ -6,7 +6,7 @@ dataset = pd.read_csv("data/processed/emails_labeled.csv")
 df = pd.DataFrame(dataset, columns=['date','sender','subject','body','gmail_labels','gmail_category','job_candidate'])
 
 
-candidates = df.loc[df['job_candidate'] == True]
+candidates = df.loc[df['job_candidate'] == True].copy()
 print(candidates)
 print(candidates['job_candidate'].value_counts())
 
