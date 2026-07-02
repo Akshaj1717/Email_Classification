@@ -26,7 +26,7 @@ JOB_SENDER_DOMAINS = [
 
 # keywords for subject line heuristics
 JOB_SUBJECT_KEYWORDS = [
-    "application", "applied", "interview", "assessment", "coding challenge",
+    "applied", "interview", "assessment", "coding challenge",
     "online assessment", "phone screen", "next steps in your application",
     "thank you for applying", "your application to", "your application for",
     "internship", "recruiting", "recruiter", "hiring team", "technical screen",
@@ -62,6 +62,9 @@ def flag_job_candidate(sender: str, subject: str) -> bool:
     subject = str(subject) if pd.notna(subject) else ""
     sender = sender.lower()
     subject = subject.lower()
+
+    if str(sender).endswith(".edu") or sender == "fastweb.com":
+        return False
 
     for domain in JOB_SENDER_DOMAINS:
         if domain in sender:
