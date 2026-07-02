@@ -98,6 +98,11 @@ def main():
     df["gmail_category"] = df["gmail_labels"].apply(extract_category)
     df["job_candidate"] = df.apply(lambda row: flag_job_candidate(row.get("sender", ""), row.get("subject", "")), axis=1)
 
+    df["label"] = df["gmail_category"].copy()
+    if "job_candidate" == True:
+        df.loc[df["job_candidate"] == True, "label"] = "Job Candidate"
+
+
     print(f"\nGmail category breakdown:")
     print(df["gmail_category"].value_counts())
 
