@@ -63,10 +63,10 @@ def flag_job_candidate(sender: str, subject: str) -> bool:
     sender = sender.lower()
     subject = subject.lower()
 
-    if str(sender) == "fastweb.com":
+    if "fastweb.com" in sender or "redditmail.com" in sender:
         return False
 
-    if str(sender).endswith(".edu"):
+    if ".edu" in sender:
         return False
 
     for domain in JOB_SENDER_DOMAINS:
