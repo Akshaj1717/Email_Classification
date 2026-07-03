@@ -4,7 +4,8 @@ import pandas as pd
 import datetime
 
 df = pd.read_csv("data/processed/emails_labeled.csv")
-
+ 
+ # step 1: convert date column to datetime and filter out emails older than 2 years
 df["date"] = pd.to_datetime(df["date"], utc=True)
 
 current_time = pd.Timestamp.now(tz="utc")
@@ -16,3 +17,5 @@ df = df[df["label"] != "Forums"]
 df.dropna(subset=["date"], inplace=True)
 print(f"Total Emails:", len(df))
 print("Label Breakdown:", df["label"].value_counts())
+
+
