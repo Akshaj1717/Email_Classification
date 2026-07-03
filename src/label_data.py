@@ -100,7 +100,12 @@ def main():
 
     df["label"] = df["gmail_category"].copy()
     if "job_candidate" == True:
-        df.loc[df["job_candidate"] == True, "label"] = "Job Candidate"
+        df.loc[df["job_candidate"] == True, "label"] = "Job"
+    if "Bills" == True:
+        df.loc[df["gmail_category"] == True, "label"] = "Updates"
+    if "Primary" == True:
+        df.loc[df["gmail_category"] == True, "label"] = "Personal"
+    print(df["label"].value_counts())
 
 
     print(f"\nGmail category breakdown:")
