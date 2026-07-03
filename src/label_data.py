@@ -99,12 +99,9 @@ def main():
     df["job_candidate"] = df.apply(lambda row: flag_job_candidate(row.get("sender", ""), row.get("subject", "")), axis=1)
 
     df["label"] = df["gmail_category"].copy()
-    if "job_candidate" == True:
-        df.loc[df["job_candidate"] == True, "label"] = "Job"
-    if "Bills" == True:
-        df.loc[df["gmail_category"] == True, "label"] = "Updates"
-    if "Primary" == True:
-        df.loc[df["gmail_category"] == True, "label"] = "Personal"
+    df.loc[df["job_candidate"] == True, "label"] = "Job"
+    df.loc[df["label"] == "Bills", "label"] = "Updates"
+    df.loc[df["label"] == "Primary", "label"] = "Personal"
     print(df["label"].value_counts())
 
 
