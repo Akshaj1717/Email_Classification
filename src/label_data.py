@@ -104,7 +104,6 @@ def main():
     df.loc[df["label"] == "Primary", "label"] = "Personal"
     print(df["label"].value_counts())
 
-
     print(f"\nGmail category breakdown:")
     print(df["gmail_category"].value_counts())
 
