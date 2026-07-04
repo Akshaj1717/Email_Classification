@@ -1,6 +1,7 @@
 # train model
 
 import pandas as pd
+from pandas import Series
 import datetime
 
 df = pd.read_csv("data/processed/emails_labeled.csv")
@@ -18,4 +19,8 @@ df.dropna(subset=["date"], inplace=True)
 print(f"Total Emails:", len(df))
 print("Label Breakdown:", df["label"].value_counts())
 
+# step 2: prepare features and labels for training
+df['subject'] = df['subject'].fillna('', inplace=True)
+df['body'] = df['body'].fillna('', inplace=True)
+df['text'] = "subject: " + df["subject"] + " body: " + df["body"]
 
