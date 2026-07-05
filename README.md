@@ -23,7 +23,7 @@ Built on 19,087 real emails from a personal Gmail account, covering the full ML 
 | Social | 0.90 | 1.00 | 0.95 | 222 |
 | Updates | 0.90 | 0.91 | 0.91 | 1,561 |
 
-![Confusion Matrix](data/processed/confusion_matrix_lr.png)
+![Confusion Matrix]([data/processed/confusion_matrix_lr.png](https://github.com/Akshaj1717/Email_Classification/blob/main/confusion_matrix_lr.png))
 
 **Key findings from the confusion matrix:**
 - Social is the cleanest class (221/222 correct) — social notifications have highly distinctive vocabulary
