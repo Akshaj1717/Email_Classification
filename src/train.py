@@ -6,8 +6,10 @@ from pandas import Series
 import datetime
 import email
 from email.header import decode_header
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
 
 df = pd.read_csv("data/processed/emails_labeled.csv")
  
@@ -48,3 +50,11 @@ X_train, X_test, y_train, y_test = train_test_split(df["text"], df["label"], tes
 vectorizer = TfidfVectorizer(max_features=50000, ngram_range=(1,2), sublinear_tf=True)
 X_train_tfidf = vectorizer.fit_transform(X_train)
 X_test_tfidf = vectorizer.transform(X_test)
+
+# step 5: training the model
+model1 = MultinomialNB()
+model1.fit(X_train_tfidf, y_train)
+
+model2 = LogisticRegression(max_iter=1000, class_weight='balanced')
+model2.fit(X_train_tfidf, y_train)
+
