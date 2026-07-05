@@ -1,13 +1,14 @@
 # train model
 
 
+from matplotlib import pyplot as plt
 import pandas as pd
 from pandas import Series
 import datetime
 import email
 from email.header import decode_header
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
+from sklearn.metrics import ConfusionMatrixDisplay, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -46,10 +47,7 @@ print(df["text"].head(3))
 
 # step 3: train/test split 
 X_train, X_test, y_train, y_test = train_test_split(df["text"], df["label"], test_size=0.2, random_state=42, stratify=df["label"])
-print("y_test distribution:")
-print(y_test.value_counts())
-print("y_train distribution:")
-print(y_train.value_counts())
+
 # step 4: TF-IDF vectorization
 vectorizer = TfidfVectorizer(max_features=50000, ngram_range=(1,2), sublinear_tf=True)
 X_train_tfidf = vectorizer.fit_transform(X_train)
@@ -72,3 +70,9 @@ print("===Naive Bayes===")
 print(classification_report(y_test, y_pred_nb, target_names=target_names))
 print("===Logistic Regression===")
 print(classification_report(y_test, y_pred_log_reg, target_names=target_names))
+
+ConfusionMatrixDisplay.from_predictions(y_test, y_pred_log_reg, target_names=target_names)
+plt.title("Confusion Matrix - Logistic Regression")
+plt.tight_layout()
+plt.savefig('data/processed/confusion_matrix_lr.png', dpi=150)
+plt.close()
