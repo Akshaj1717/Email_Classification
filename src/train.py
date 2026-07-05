@@ -1,8 +1,10 @@
 # train model
 
+
 import pandas as pd
 from pandas import Series
 import datetime
+import email
 from email.header import decode_header
 
 df = pd.read_csv("data/processed/emails_labeled.csv")
@@ -22,10 +24,16 @@ print("Label Breakdown:", df["label"].value_counts())
 
 # decoding
 def decode_subject(subject):
-    if 
+    if not pd.notna(subject):
+        return subject
+    
+    try:
+        return str(email.header.make_header(decode_header(subject)))
+    except Exception:
+        return str(subject)
+df['subject'] = df['subject'].apply(decode_subject)
 
-
-# step 2: prepare features and labels for training
+# step 2: prepare features and labels for trainin
 df['subject'] = df['subject'].fillna('')
 df['body'] = df['body'].fillna('')
 df['text'] = "subject: " + df["subject"] + " body: " + df["body"]
