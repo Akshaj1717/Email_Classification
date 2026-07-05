@@ -7,6 +7,7 @@ import datetime
 import email
 from email.header import decode_header
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -52,9 +53,18 @@ X_train_tfidf = vectorizer.fit_transform(X_train)
 X_test_tfidf = vectorizer.transform(X_test)
 
 # step 5: training the model
-model1 = MultinomialNB()
-model1.fit(X_train_tfidf, y_train)
+nb_model = MultinomialNB()
+nb_model.fit(X_train_tfidf, y_train)
 
-model2 = LogisticRegression(max_iter=1000, class_weight='balanced')
-model2.fit(X_train_tfidf, y_train)
+log_reg_model = LogisticRegression(max_iter=1000, class_weight='balanced')
+log_reg_model.fit(X_train_tfidf, y_train)
 
+# step 6: evaluate both models
+y_pred_nb = nb_model.predict(X_test_tfidf)
+y_pred_log_reg = log_reg_model.predict(X_test_tfidf)
+
+
+print("===Naive Bayes===")
+print(classification_report(y_test, y_pred_nb, target_names=df["label"].unique()))
+print("===Logistic Regression===")
+print(classification_report(y_test, y_pred_log_reg, target_names=df["label"].unique()))
