@@ -6,6 +6,7 @@ from pandas import Series
 import datetime
 import email
 from email.header import decode_header
+from sklearn.model_selection import train_test_split
 
 df = pd.read_csv("data/processed/emails_labeled.csv")
  
@@ -38,3 +39,6 @@ df['subject'] = df['subject'].fillna('')
 df['body'] = df['body'].fillna('')
 df['text'] = "subject: " + df["subject"] + " body: " + df["body"]
 print(df["text"].head(3))
+
+# step 3: train/test split 
+X_train, X_test, y_train, y_test = train_test_split(df["text"], df["label"], test_size=0.2, random_state=42, stratify=df["label"])
