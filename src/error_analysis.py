@@ -10,6 +10,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 
+
+df = pd.read_csv("data/processed/emails_labeled.csv")
 # step 1: convert date column to datetime and filter out emails older than 2 years
 df["date"] = pd.to_datetime(df["date"], utc=True)
 
@@ -49,4 +51,10 @@ X_train_tfidf = vectorizer.fit_transform(X_train)
 X_test_tfidf = vectorizer.transform(X_test)
 
 # results
-df2 = pd.DataFrame(pd.merge(y_test, right_index=True), LogisticRegression(max_iter=1000, class_weight='balanced').fit(X_train_tfidf, y_train).predict(X_test_tfidf), columns=['true_label', 'predicted_label'])
+predicted = pd.Series(LogisticRegression(max_iter=1000, class_weight='balanced').fit(X_train_tfidf, y_train).predict(X_test_tfidf), index=y_test.index)
+df2 = pd.concat([y_test, predicted], axis=1)
+df2.columns = ['true_label', 'predicted_label']
+
+
+filtered_df = df2[df2['true_label'] != df2['predicted_label']]
+print(filtered_df.head(10))
