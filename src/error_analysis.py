@@ -1,4 +1,6 @@
 # replicating to analyze key errors affecting model performance
+import random
+
 import pandas as pd
 from pandas import Series
 import datetime
@@ -58,3 +60,8 @@ df2.columns = ['true_label', 'predicted_label']
 
 filtered_df = df2[df2['true_label'] != df2['predicted_label']]
 print(filtered_df.head(10))
+
+# true label is promotions and predicted label is updates
+mask = (filtered_df["true_label"] == "Promotions") & (filtered_df["predicted_label"] == "Updates")
+filter_df = filtered_df[mask]
+print("Misclassified Promotions as Updates:", filter_df.head(10))
