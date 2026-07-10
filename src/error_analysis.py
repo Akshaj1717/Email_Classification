@@ -64,4 +64,10 @@ print(filtered_df.head(10))
 # true label is promotions and predicted label is updates
 mask = (filtered_df["true_label"] == "Promotions") & (filtered_df["predicted_label"] == "Updates")
 filter_df = filtered_df[mask]
-print("Misclassified Promotions as Updates:", filter_df.head(10))
+summary_df = pd.DataFrame({
+    "Sender": df.loc[filter_df.index, "sender"],
+    "Subject": df.loc[filter_df.index, "subject"]
+})
+pd.set_option('display.max_colwidth', 80)
+print(summary_df[["sender", "subject"]].head(10).to_string())
+
