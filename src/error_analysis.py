@@ -65,9 +65,35 @@ print(filtered_df.head(10))
 mask = (filtered_df["true_label"] == "Promotions") & (filtered_df["predicted_label"] == "Updates")
 filter_df = filtered_df[mask]
 summary_df = pd.DataFrame({
-    "Sender": df.loc[filter_df.index, "sender"],
-    "Subject": df.loc[filter_df.index, "subject"]
+    "sender": df.loc[filter_df.index, "sender"],
+    "subject": df.loc[filter_df.index, "subject"]
 })
 pd.set_option('display.max_colwidth', 80)
 print(summary_df[["sender", "subject"]].head(10).to_string())
 
+# true label is job and predicted label is updates
+mask2 = (filtered_df["true_label"] == "Job") & (filtered_df["predicted_label"] == "Updates")
+filter_df2 = filtered_df[mask2]
+summary_df2 = pd.DataFrame({
+    "sender": df.loc[filter_df2.index, "sender"],
+    "subject": df.loc[filter_df2.index, "subject"]
+})
+print(summary_df2[["sender", "subject"]].head(10).to_string())
+
+# true label is personal and predicted label is updates
+mask3 = (filtered_df["true_label"] == "Personal") & (filtered_df["predicted_label"] == "Updates")
+filter_df3 = filtered_df[mask3]
+summary_df3 = pd.DataFrame({
+    "sender": df.loc[filter_df3.index, "sender"],
+    "subject": df.loc[filter_df3.index, "subject"]
+})
+print(summary_df3[["sender", "subject"]].head(10).to_string())
+
+# true lablel is personal and predicted label is job
+mask4 = (filtered_df["true_label"] == "Personal") & (filtered_df["predicted_label"] == "Job")
+filter_df4 = filtered_df[mask4]
+summary_df4 = pd.DataFrame({
+    "sender": df.loc[filter_df4.index, "sender"],
+    "subject": df.loc[filter_df4.index, "subject"]
+})
+print(summary_df4[["sender", "subject"]].head(10).to_string())
