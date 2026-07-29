@@ -2,6 +2,7 @@
 
 
 from matplotlib import pyplot as plt
+from scipy.sparse import hstack
 import pandas as pd
 from pandas import Series
 import datetime
@@ -12,6 +13,7 @@ from sklearn.metrics import ConfusionMatrixDisplay, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.preprocessing import OneHotEncoder
 
 df = pd.read_csv("data/processed/emails_labeled.csv")
  
@@ -46,25 +48,35 @@ df['text'] = "subject: " + df["subject"] + " body: " + df["body"]
 print(df["text"].head(3))
 
 # step 3: train/test split 
-X_train, X_test, y_train, y_test = train_test_split(df["text"], df["label"], test_size=0.2, random_state=42, stratify=df["label"])
+X_train, X_test, y_train, y_test = train_test_split(df[["text", "sender"]], df["label"], test_size=0.2, random_state=42, stratify=df["label"])
 
 # step 4: TF-IDF vectorization
 vectorizer = TfidfVectorizer(max_features=50000, ngram_range=(1,2), sublinear_tf=True)
-X_train_tfidf = vectorizer.fit_transform(X_train)
-X_test_tfidf = vectorizer.transform(X_test)
+X_train_tfidf = vectorizer.fit_transform(X_train["text"])
+
+sender_domain_train = X_train["sender"].str.extract(r'@([A-Za-z0-9.-]+)')
+sender_domain_test = X_test["sender"].str.extract(r'@([A-Za-z0-9.-]+)')
+encoder = OneHotEncoder(handle_unknown='ignore')
+sender_train_encoded = encoder.fit_transform(sender_domain_train)
+sender_test_encoded = encoder.transform(sender_domain_test)
+
+X_test_tfidf = vectorizer.transform(X_test["text"])
+
+X_train_combined = hstack([X_train_tfidf, sender_train_encoded])
+X_test_combined = hstack([X_test_tfidf, sender_test_encoded])
 
 # step 5: training the model
 nb_model = MultinomialNB()
 nb_model.fit(X_train_tfidf, y_train)
 
 log_reg_model = LogisticRegression(max_iter=1000, class_weight='balanced')
-log_reg_model.fit(X_train_tfidf, y_train)
+log_reg_model.fit(X_train_combined, y_train)
 
 # step 6: evaluate both models
 y_pred_nb = nb_model.predict(X_test_tfidf)
-y_pred_log_reg = log_reg_model.predict(X_test_tfidf)
+y_pred_log_reg = log_reg_model.predict(X_test_combined)
 
-target_names = sorted(df['label'].unique())
+target_names = ["Job", "Personal", "Promotions", "Social", "Updates"]
 
 print("===Naive Bayes===")
 print(classification_report(y_test, y_pred_nb, target_names=target_names))
