@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS
 sql_query = "SELECT COUNT(*) FROM emails"
 df_from_sql = pd.read_sql_query(sql_query, connection)
 print(df_from_sql)
-
+cursor.close()
 
 
 
